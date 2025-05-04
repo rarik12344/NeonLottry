@@ -1,1 +1,16 @@
-
+{
+  "name": "Neon Lottery",
+  "description": "Daily ETH lottery on Base Network",
+  "image": "https://neon-lottery.vercel.app/assets/images/frame-preview.jpg",
+  "external_url": "https://neon-lottery.vercel.app",
+  "frame": {
+    "version": "vNext",
+    "image": "https://neon-lottery.vercel.app/api/frame/image",
+    "post_url": "https://neon-lottery.vercel.app/api/frame",
+    "buttons": [
+      {"label": "🎟️ Buy Ticket", "action": "post"},
+      {"label": "🏆 Winners", "action": "post"}
+    ],
+    "refresh_period": 60
+  }
+}
