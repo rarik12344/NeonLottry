@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone', // Оптимально для Vercel
+  output: 'standalone', // Для лучшей совместимости с Vercel
   reactStrictMode: true,
-  images: {
-    domains: [https://neonwin.vercel.app/],
-  },
+  // Отключаем неподдерживаемые функции
+  experimental: {
+    serverComponentsExternalPackages: []
+  }
 }
 
 module.exports = nextConfig
