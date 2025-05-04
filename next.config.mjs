@@ -1,31 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+  webpack: (config) => {
+    config.externals.push({
+      'utf-8-validate': 'commonjs utf-8-validate',
+      bufferutil: 'commonjs bufferutil',
+    });
+    return config;
   },
-  async headers() {
-    return [
-      {
-        source: '/.well-known/farcaster.json',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Content-Type', value: 'application/json' }
-        ]
-      },
-      {
-        source: '/api/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,POST,OPTIONS' }
-        ]
-      }
-    ];
-  }
+  images: {
+    domains: ['neonwin.vercel.app'],
+  },
 };
 
 export default nextConfig;
