@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone', // Для лучшей совместимости с Vercel
-  reactStrictMode: true,
-  // Отключаем неподдерживаемые функции
-  experimental: {
-    serverComponentsExternalPackages: []
+  output: 'export', // Для статического экспорта
+  distDir: 'out',
+  images: {
+    unoptimized: true // Отключаем оптимизацию изображений
   }
 }
 
