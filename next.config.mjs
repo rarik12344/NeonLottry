@@ -4,7 +4,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'neonwin.vercel.app'
+        hostname: 'neonwin.vercel.app',
+        pathname: '/**'
       }
     ]
   },
