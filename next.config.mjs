@@ -9,10 +9,7 @@ const nextConfig = {
     ]
   },
   experimental: {
-    serverComponentsExternalPackages: [
-      '@coinbase/onchainkit',
-      'viem'
-    ]
+    serverComponentsExternalPackages: ['@vercel/og']
   }
 }
 
