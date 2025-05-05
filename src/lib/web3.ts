@@ -1,18 +1,16 @@
-import { createConfig, http } from 'wagmi';
-import { base } from 'wagmi/chains';
-import { injected } from 'wagmi/connectors';
-import { BASE_RPC_URL } from '@/config/constants';
+import { createPublicClient, http, encodeFunctionData } from 'viem'
+import { base } from 'viem/chains'
+import { ABI } from '../config/constants'
 
-export const config = createConfig({
-  chains: [base],
-  transports: {
-    [base.id]: http(BASE_RPC_URL),
-  },
-  connectors: [
-    injected({
-      target: 'metaMask',
-    }),
-  ],
-});
+export const publicClient = createPublicClient({
+  chain: base,
+  transport: http()
+})
 
-export { type Chain, type Client, type Connector } from 'wagmi';
+export async function buyTickets(address: string, tickets: number) {
+  return encodeFunctionData({
+    abi: ABI,
+    functionName: 'buyTickets',
+    args: [tickets]
+  })
+}
