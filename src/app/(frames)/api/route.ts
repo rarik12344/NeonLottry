@@ -1,47 +1,69 @@
+import { NextResponse } from 'next/server'
+import { FrameRequest, getFrameMessage } from '@coinbase/onchainkit'
 
-import { FrameRequest, getFrameMessage } from 'frames.js';
-import { NextResponse } from 'next/server';
-import { SITE_CONFIG } from '@/config/site';
-import { getCurrentRound, buyTicket } from '@/lib/lottery';
+export const dynamic = 'force-dynamic'
 
-export const dynamic = 'force-dynamic';
+export async function POST(req: Request): Promise<Response> {
+  const body: FrameRequest = await req.json()
+  const { isValid, message } = await getFrameMessage(body)
 
-export async function POST(req: Request) {
-  const body: FrameRequest = await req.json();
-  const { message } = await getFrameMessage(body);
-
-  if (!message?.isValid) {
-    return new NextResponse('Unauthorized', { status: 401 });
+  if (!isValid) {
+    return NextResponse.json({ error: 'Invalid frame message' }, { status: 400 })
   }
 
-  try {
-    if (message.buttonIndex === 1) {
-      const txHash = await buyTicket(message.fid);
-      return NextResponse.json({
-        image: `${SITE_CONFIG.url}/api/ticket-image?tx=${txHash}`,
+  const buttonIndex = message.button
+  let response: any
+
+  switch (buttonIndex) {
+    case 1: // Купить билет
+      response = {
+        image: {
+          src: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/images/frame-preview.jpg`,
+          aspectRatio: '1.91:1'
+        },
         buttons: [
-          { label: 'View TX', action: 'link', target: `https://basescan.org/tx/${txHash}` },
-          { label: 'Buy Again', action: 'post' }
+          {
+            label: 'Подтвердить покупку',
+            action: 'tx',
+            target: `${process.env.NEXT_PUBLIC_SITE_URL}/api/buy-ticket`,
+            postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/frame`
+          }
         ],
-        post_url: `${SITE_CONFIG.url}/api/frame`
-      });
-    }
-
-    return NextResponse.json({
-      image: `${SITE_CONFIG.url}${SITE_CONFIG.frameImage}`,
-      buttons: [
-        { label: '🎟️ Buy Ticket', action: 'post' },
-        { label: '🏆 Winners', action: 'post' }
-      ],
-      post_url: `${SITE_CONFIG.url}/api/frame`
-    });
-  } catch (error) {
-    console.error('Frame error:', error);
-    return NextResponse.json({
-      image: `${SITE_CONFIG.url}/api/error-image`,
-      buttons: [
-        { label: 'Retry', action: 'post' }
-      ]
-    });
+        postUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/frame`
+      }
+      break
+    case 2: // Мои билеты
+      response = {
+        image: {
+          src: `${process.env.NEXT_PUBLIC_SITE_URL}/api/ticket-image?address=${message.interactor.verified_accounts[0]}`,
+          aspectRatio: '1.91:1'
+        },
+        buttons: [
+          {
+            label: 'Назад',
+            action: 'post'
+          }
+        ]
+      }
+      break
+    default:
+      response = {
+        image: {
+          src: `${process.env.NEXT_PUBLIC_SITE_URL}/assets/images/frame-preview.jpg`,
+          aspectRatio: '1.91:1'
+        },
+        buttons: [
+          {
+            label: 'Купить билет',
+            action: 'post'
+          },
+          {
+            label: 'Мои билеты',
+            action: 'post'
+          }
+        ]
+      }
   }
+
+  return NextResponse.json(response)
 }
