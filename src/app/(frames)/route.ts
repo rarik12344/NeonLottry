@@ -1,26 +1,23 @@
-import { getFrameMetadata } from '@coinbase/onchainkit/frame';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'
+import { getFrameMetadata } from '@coinbase/onchainkit'
 
-export async function POST(req: NextRequest): Promise<Response> {
+export async function POST() {
   const frameMetadata = getFrameMetadata({
     buttons: [
-      {
-        label: 'Купить билет',
-      },
-      {
-        label: 'Мои билеты',
-      }
+      { label: 'Купить билет', action: 'post' },
+      { label: 'Мои билеты', action: 'post' }
     ],
-    image: `${process.env.NEXT_PUBLIC_URL}/api/image`,
+    image: {
+      src: `${process.env.NEXT_PUBLIC_URL}/api/image`,
+      aspectRatio: '1.91:1'
+    },
     postUrl: `${process.env.NEXT_PUBLIC_URL}/api/frame`,
-  });
+  })
 
   return new NextResponse(`
     <!DOCTYPE html>
     <html>
-      <head>
-        ${frameMetadata}
-      </head>
+      <head>${frameMetadata}</head>
     </html>
-  `);
+  `)
 }
